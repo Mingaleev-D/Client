@@ -1,30 +1,37 @@
 package com.example.client.ui.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.graphics.Color.Companion.White
 
+@SuppressLint("ConflictingOnColor")
 private val DarkColorPalette = darkColors(
-    primary = Green900,
-    secondary = Green300,
-    background = Gray,
+    primary = Black900,
+    secondary = Black900,
+    primaryVariant = Black900,
+    background = Black900,
     surface = White150,
     onPrimary = White,
-    onSecondary = Gray,
+    onSecondary = Black500,
     onBackground = White,
     onSurface = White850,
 )
 
+
+@SuppressLint("ConflictingOnColor")
 private val LightColorPalette = lightColors(
-    primary = Pink100,
-    secondary = Pink900,
+    primary = White,
+    secondary = White,
+    primaryVariant = White,
     background = White,
     surface = White850,
-    onPrimary = Gray,
-    onSecondary = White,
+    onPrimary = Black900,
+    onSecondary = Black500,
     onBackground = Gray,
     onSurface = Gray,
 )
