@@ -2,6 +2,7 @@ package com.example.client.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.client.R
+import com.example.client.domain.FeedPost
+import com.example.client.domain.StatisticItem
+import com.example.client.domain.StatisticType
 import com.example.client.ui.theme.ClientTheme
 
 /**
@@ -37,21 +41,31 @@ import com.example.client.ui.theme.ClientTheme
  */
 
 @Composable
-fun PostCard() {
+fun PostCard(
+    modifier: Modifier = Modifier,
+    feedPost: FeedPost,
+    onLikeCkickedListener: (StatisticItem) -> Unit,
+    onShareCkickedListener: (StatisticItem) -> Unit,
+    onViewsCkickedListener: (StatisticItem) -> Unit,
+    onCommentsCkickedListener: (StatisticItem) -> Unit
+) {
 
    Card(
-       elevation = 4.dp
+       elevation = 4.dp,
+       modifier = modifier
    ) {
       Column(
           modifier = Modifier.padding(8.dp)
       ) {
 
-         PostHeader()
+         PostHeader(
+             feedPost = feedPost
+         )
 
          Spacer(modifier = Modifier.height(8.dp))
 
          Text(
-             text = "Demo text",
+             text = feedPost.contentString,
              color = MaterialTheme.colors.onPrimary,
              maxLines = 2
          )
@@ -59,7 +73,7 @@ fun PostCard() {
          Spacer(modifier = Modifier.height(8.dp))
 
          Image(
-             painter = painterResource(id = R.drawable.apple),
+             painter = painterResource(id = feedPost.contentImageResId),
              contentDescription = null,
              modifier = Modifier.fillMaxWidth(),
              contentScale = ContentScale.FillWidth
@@ -67,45 +81,93 @@ fun PostCard() {
 
          Spacer(modifier = Modifier.height(8.dp))
 
-         Statistics()
+         Statistics(
+             statistics = feedPost.statistics,
+             onLikeCkickedListener = onLikeCkickedListener,
+             onShareCkickedListener = onShareCkickedListener,
+             onViewsCkickedListener = onViewsCkickedListener,
+             onCommentsCkickedListener = onCommentsCkickedListener
+         )
       }
 
    }
 }
 
 @Composable
-private fun Statistics() {
+private fun Statistics(
+    statistics: List<StatisticItem>,
+    onLikeCkickedListener: (StatisticItem) -> Unit,
+    onShareCkickedListener: (StatisticItem) -> Unit,
+    onViewsCkickedListener: (StatisticItem) -> Unit,
+    onCommentsCkickedListener: (StatisticItem) -> Unit
+) {
 
-   Row(
-
-   ) {
-
+   Row {
       Row(
           modifier = Modifier.weight(1f),
       ) {
-         IconWithText(iconResId = Icons.Default.Visibility, text = "12")
+
+         val viewsItem = statistics.getItemByType(StatisticType.VIEWS)
+
+         IconWithText(
+             iconResId = Icons.Default.Visibility,
+             text = viewsItem.count.toString(),
+             onItemClickedListener = {
+                onViewsCkickedListener(viewsItem)
+             }
+
+         )
       }
 
       Row(
           modifier = Modifier.weight(1f),
           horizontalArrangement = Arrangement.SpaceBetween
       ) {
-         IconWithText(iconResId = Icons.Outlined.ArrowOutward, text = "12")
-         IconWithText(iconResId = Icons.Default.Comment, text = "12")
-         IconWithText(iconResId = Icons.Default.FavoriteBorder, text = "12")
+
+         val shareItem = statistics.getItemByType(StatisticType.SHARES)
+         IconWithText(
+             iconResId = Icons.Outlined.ArrowOutward,
+             text = shareItem.count.toString(),
+             onItemClickedListener = {
+                onShareCkickedListener(shareItem)
+             })
+
+         val commentsItem = statistics.getItemByType(StatisticType.COMMENTS)
+         IconWithText(
+             iconResId = Icons.Default.Comment,
+             text = commentsItem.count.toString(),
+             onItemClickedListener = {
+                onCommentsCkickedListener(commentsItem)
+             })
+
+         val likesItem = statistics.getItemByType(StatisticType.LIKES)
+         IconWithText(
+             iconResId = Icons.Default.FavoriteBorder,
+             text = likesItem.count.toString(),
+             onItemClickedListener = {
+                onLikeCkickedListener(likesItem)
+             })
       }
    }
+}
+
+private fun List<StatisticItem>.getItemByType(type: StatisticType): StatisticItem {
+   return this.find { it.type == type } ?: throw IllegalStateException("Statistic item not found")
 }
 
 @Composable
 private fun IconWithText(
     iconResId: ImageVector,
-    text: String
+    text: String,
+    onItemClickedListener: () -> Unit = {}
 ) {
 
    Row(
        horizontalArrangement = Arrangement.SpaceBetween,
-       verticalAlignment = Alignment.CenterVertically
+       verticalAlignment = Alignment.CenterVertically,
+       modifier = Modifier.clickable {
+          onItemClickedListener()
+       }
    ) {
       Icon(
           imageVector = iconResId, contentDescription = null,
@@ -135,6 +197,6 @@ private fun IconWithText(
 @Composable
 private fun PostCardPreview() {
    ClientTheme {
-      PostCard()
+      // PostCard()
    }
 }

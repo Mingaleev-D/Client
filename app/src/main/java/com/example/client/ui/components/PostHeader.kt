@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.client.R
+import com.example.client.domain.FeedPost
 
 /**
  * @author : Mingaleev D
@@ -30,7 +31,9 @@ import com.example.client.R
  */
 
 @Composable
-fun PostHeader() {
+fun PostHeader(
+    feedPost: FeedPost
+) {
 
       Row(
           modifier = Modifier
@@ -39,7 +42,7 @@ fun PostHeader() {
       ) {
 
          Image(
-             painter = painterResource(id = R.drawable.photo),
+             painter = painterResource(id = feedPost.avatarResId),
              contentDescription = null,
              modifier = Modifier
                  .size(50.dp)
@@ -53,14 +56,14 @@ fun PostHeader() {
          ) {
 
             Text(
-                text = "Demo text",
+                text = feedPost.communityName,
                 color = MaterialTheme.colors.onPrimary
             )
 
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "14 : 00",
+                text = feedPost.publishDate,
                 color = MaterialTheme.colors.onPrimary
             )
          }
